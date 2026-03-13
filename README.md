@@ -195,12 +195,9 @@
   <header>
     <div class="hero-card">
       <h1>Tyr Capital</h1>
-      <div class="tagline">Digital Asset Trading & Market Research</div>
+      <div class="tagline">Digital Asset Managment & Market Research</div>
       <p class="hero-text">
-        Tyr Capital is a trading-focused digital asset company centered on disciplined execution,
-        structured risk management, and high-conviction market research.
-      </p>
-    </div>
+  
   </header>
 
   <main class="container">
