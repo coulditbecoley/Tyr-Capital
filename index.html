@@ -29,7 +29,44 @@
     html{
       scroll-behavior:smooth;
     }
+<script>
+  document.querySelectorAll('.custom-select').forEach(select => {
+    const trigger = select.querySelector('.custom-select-trigger');
+    const options = select.querySelector('.custom-options');
+    const hiddenSelect = select.querySelector('.hidden-select');
+    const optionItems = select.querySelectorAll('.custom-option');
 
+    trigger.addEventListener('click', () => {
+      document.querySelectorAll('.custom-select').forEach(other => {
+        if (other !== select) other.classList.remove('open');
+      });
+      select.classList.toggle('open');
+    });
+
+    optionItems.forEach(option => {
+      option.addEventListener('click', () => {
+        const value = option.getAttribute('data-value');
+        const text = option.textContent;
+
+        trigger.textContent = text;
+        hiddenSelect.value = value;
+
+        optionItems.forEach(item => item.classList.remove('selected'));
+        option.classList.add('selected');
+
+        select.classList.remove('open');
+      });
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.custom-select')) {
+      document.querySelectorAll('.custom-select').forEach(select => {
+        select.classList.remove('open');
+      });
+    }
+  });
+</script>
     body{
       margin:0;
       font-family: Georgia, "Times New Roman", Times, serif;
@@ -476,6 +513,164 @@
   background:#0d1726;
   color:#ffffff;
 }
+    .lender-form{
+  margin-top:22px;
+  display:grid;
+  gap:16px;
+}
+
+.form-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.form-group label{
+  font-family:"Segoe UI", Arial, sans-serif;
+  font-size:0.95rem;
+  font-weight:600;
+  color:#e8edf5;
+}
+
+.form-group input,
+.form-group textarea,
+.custom-select-trigger{
+  width:100%;
+  padding:14px 16px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.04);
+  color:#f3f6fb;
+  font-family:"Segoe UI", Arial, sans-serif;
+  font-size:0.98rem;
+  outline:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
+  transition:border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder{
+  color:#95a1b7;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.custom-select.open .custom-select-trigger{
+  border-color:rgba(200,164,90,0.75);
+  box-shadow:0 0 0 3px rgba(200,164,90,0.12);
+  background:rgba(255,255,255,0.06);
+}
+
+.form-group textarea{
+  min-height:130px;
+  resize:vertical;
+}
+
+.custom-select{
+  position:relative;
+  font-family:"Segoe UI", Arial, sans-serif;
+}
+
+.custom-select-trigger{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  user-select:none;
+}
+
+.custom-select-trigger::after{
+  content:"▾";
+  font-size:0.95rem;
+  color:#c8a45a;
+  margin-left:12px;
+}
+
+.custom-options{
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  right:0;
+  background:#0d1726;
+  border:1px solid rgba(200,164,90,0.28);
+  border-radius:14px;
+  box-shadow:0 18px 40px rgba(0,0,0,0.42);
+  overflow:hidden;
+  opacity:0;
+  transform:translateY(8px);
+  pointer-events:none;
+  transition:opacity 0.18s ease, transform 0.18s ease;
+  z-index:50;
+}
+
+.custom-select.open .custom-options{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.custom-option{
+  padding:13px 16px;
+  color:#e8edf5;
+  background:#0d1726;
+  cursor:pointer;
+  transition:background 0.18s ease, color 0.18s ease;
+}
+
+.custom-option:hover,
+.custom-option.selected{
+  background:rgba(200,164,90,0.14);
+  color:#fff;
+}
+
+.hidden-select{
+  display:none;
+}
+
+.form-submit{
+  margin-top:6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+  align-items:center;
+}
+
+.submit-btn{
+  border:none;
+  cursor:pointer;
+  padding:14px 22px;
+  border-radius:14px;
+  font-family:"Segoe UI", Arial, sans-serif;
+  font-weight:700;
+  font-size:0.98rem;
+  color:#08111c;
+  background:linear-gradient(135deg,#e1c27a,#c8a45a);
+  box-shadow:0 12px 30px rgba(200,164,90,0.28);
+  transition:transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.submit-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 34px rgba(200,164,90,0.34);
+}
+
+.form-note{
+  font-family:"Segoe UI", Arial, sans-serif;
+  font-size:0.9rem;
+  color:#97a3b8;
+}
+
+@media (max-width: 700px){
+  .form-row{
+    grid-template-columns:1fr;
+  }
+}
   </style>
 </head>
 <body>
@@ -598,7 +793,7 @@ box-shadow:0 10px 35px rgba(0,0,0,0.6);
 
   <p>
     Want to earn high interest on your short term loan? Terms as low as 6 months.
-    Submit an offer now!
+    Submit an Inquiry Now!.
   </p>
 
   <form
@@ -625,37 +820,69 @@ box-shadow:0 10px 35px rgba(0,0,0,0.6);
       </div>
 
       <div class="form-group">
-        <label for="term">Preferred Loan Term</label>
-        <select id="term" name="loan_term">
-          <option value="">Select a term</option>
-          <option>6 months</option>
-          <option>12 months</option>
-          <option>18 months</option>
-          <option>24 months</option>
-        </select>
+        <label>Preferred Loan Term</label>
+
+        <div class="custom-select">
+          <div class="custom-select-trigger">Select a term</div>
+          <div class="custom-options">
+            <div class="custom-option" data-value="">Select a term</div>
+            <div class="custom-option" data-value="6 months">6 months</div>
+            <div class="custom-option" data-value="12 months">12 months</div>
+            <div class="custom-option" data-value="18 months">18 months</div>
+            <div class="custom-option" data-value="24 months">24 months</div>
+          </div>
+          <select class="hidden-select" name="loan_term">
+            <option value="">Select a term</option>
+            <option value="6 months">6 months</option>
+            <option value="12 months">12 months</option>
+            <option value="18 months">18 months</option>
+            <option value="24 months">24 months</option>
+          </select>
+        </div>
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="amount">Potential Loan Amount</label>
-        <select id="amount" name="amount_range">
-          <option value="">Select a range</option>
-          <option>$25,000 - $50,000</option>
-          <option>$50,000 - $100,000</option>
-          <option>$100,000 - $500,000</option>
-          <option>$500,000+</option>
-        </select>
+        <label>Potential Loan Amount</label>
+
+        <div class="custom-select">
+          <div class="custom-select-trigger">Select a range</div>
+          <div class="custom-options">
+            <div class="custom-option" data-value="">Select a range</div>
+            <div class="custom-option" data-value="$25,000 - $50,000">$25,000 - $50,000</div>
+            <div class="custom-option" data-value="$50,000 - $100,000">$50,000 - $100,000</div>
+            <div class="custom-option" data-value="$100,000 - $500,000">$100,000 - $500,000</div>
+            <div class="custom-option" data-value="$500,000+">$500,000+</div>
+          </div>
+          <select class="hidden-select" name="amount_range">
+            <option value="">Select a range</option>
+            <option value="$5,000 - $10,000">$25,000 - $50,000</option>
+            <option value="$10,000 - $25,000">$50,000 - $100,000</option>
+            <option value="$25,000 - $50,000">$100,000 - $500,000</option>
+            <option value="$50,000+">$500,000+</option>
+          </select>
+        </div>
       </div>
 
       <div class="form-group">
-        <label for="contact-method">Preferred Contact Method</label>
-        <select id="contact-method" name="contact_method">
-          <option value="">Select one</option>
-          <option>Email</option>
-          <option>Phone</option>
-          <option>Telegram</option>
-        </select>
+        <label>Preferred Contact Method</label>
+
+        <div class="custom-select">
+          <div class="custom-select-trigger">Select one</div>
+          <div class="custom-options">
+            <div class="custom-option" data-value="">Select one</div>
+            <div class="custom-option" data-value="Email">Email</div>
+            <div class="custom-option" data-value="Phone">Phone</div>
+            <div class="custom-option" data-value="Telegram">Telegram</div>
+          </div>
+          <select class="hidden-select" name="contact_method">
+            <option value="">Select one</option>
+            <option value="Email">Email</option>
+            <option value="Phone">Phone</option>
+            <option value="Telegram">Telegram</option>
+          </select>
+        </div>
       </div>
     </div>
 
