@@ -942,22 +942,38 @@
             }
           });
 
-          if (response.ok) {
-            lenderForm.reset();
+        if (response.ok) {
+  const loanTerm = lenderForm.querySelector('select[name="loan_term"]')?.value || '';
+  const amountRange = lenderForm.querySelector('select[name="amount_range"]')?.value || '';
+  const contactMethod = lenderForm.querySelector('select[name="contact_method"]')?.value || '';
 
-            document.querySelectorAll('.custom-select').forEach(select => {
-              const trigger = select.querySelector('.custom-select-trigger');
-              const firstOption = select.querySelector('.custom-option');
-              const hiddenSelect = select.querySelector('.hidden-select');
+  if (typeof gtag === 'function') {
+    gtag('event', 'generate_lead', {
+      event_category: 'Lender Form',
+      event_label: 'Become A Lender Form Submission',
+      loan_term: loanTerm,
+      amount_range: amountRange,
+      contact_method: contactMethod,
+      value: 1
+    });
+  }
 
-              trigger.textContent = firstOption.textContent;
-              hiddenSelect.value = firstOption.getAttribute('data-value');
+  lenderForm.reset();
 
-              select.querySelectorAll('.custom-option').forEach(item => item.classList.remove('selected'));
-              firstOption.classList.add('selected');
-            });
+  document.querySelectorAll('.custom-select').forEach(select => {
+    const trigger = select.querySelector('.custom-select-trigger');
+    const firstOption = select.querySelector('.custom-option');
+    const hiddenSelect = select.querySelector('.hidden-select');
 
-            openSuccessModal();
+    trigger.textContent = firstOption.textContent;
+    hiddenSelect.value = firstOption.getAttribute('data-value');
+
+    select.querySelectorAll('.custom-option').forEach(item => item.classList.remove('selected'));
+    firstOption.classList.add('selected');
+  });
+
+  openSuccessModal();
+}
           } else {
             alert('There was a problem submitting your form. Please try again.');
           }
