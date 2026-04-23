@@ -1237,3 +1237,57 @@ main.container {
     gap: 32px;
   }
 }
+
+/* ---- Credibility Bar ---- */
+.credibility-bar {
+  background: rgba(10, 18, 30, 0.92);
+  border-bottom: 1px solid rgba(200, 164, 90, 0.18);
+  border-top: 1px solid rgba(200, 164, 90, 0.12);
+  padding: 14px 0;
+}
+
+.credibility-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.credibility-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 20px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #c8b87a;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.credibility-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(200, 164, 90, 0.25);
+  flex-shrink: 0;
+}
+
+@media (max-width: 760px) {
+  .credibility-inner {
+    justify-content: flex-start;
+    gap: 4px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .credibility-inner::-webkit-scrollbar {
+    display: none;
+  }
+  .credibility-item {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+  }
+}

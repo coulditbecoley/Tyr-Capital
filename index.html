@@ -84,6 +84,36 @@
     </div>
   </header>
 
+  <!-- Social Proof Credibility Bar -->
+  <div class="credibility-bar">
+    <div class="container credibility-inner">
+      <div class="credibility-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e1c27a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Est. 2022</span>
+      </div>
+      <div class="credibility-divider"></div>
+      <div class="credibility-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e1c27a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>10+ Years Trading Experience</span>
+      </div>
+      <div class="credibility-divider"></div>
+      <div class="credibility-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e1c27a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>U.S. Veteran-Owned</span>
+      </div>
+      <div class="credibility-divider"></div>
+      <div class="credibility-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e1c27a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span>Private Lending Available</span>
+      </div>
+      <div class="credibility-divider"></div>
+      <div class="credibility-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e1c27a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span>Digital Asset Specialists</span>
+      </div>
+    </div>
+  </div>
+
   <main class="container">
 
     <section id="about" class="section-card">
@@ -242,6 +272,22 @@
         </div>
 
         <input type="hidden" name="_subject" value="New Tyr Capital lender form submission">
+        <!-- Formspree auto-reply: sends confirmation email to the submitter -->
+        <input type="hidden" name="_replyto" id="replyToField" value="">
+        <input type="hidden" name="_autoresponse" value="Thank you for reaching out to Tyr Capital. We have received your lending inquiry and a member of our team will follow up with you directly within 24 hours.
+
+Here is a summary of what happens next:
+
+1. Our team will review your inquiry and reach out via your preferred contact method.
+2. We will walk you through available lending terms and answer any questions you have.
+3. If there is a mutual fit, we will provide a formal term sheet for your review.
+
+In the meantime, feel free to join our Telegram channel for market updates: https://t.me/tyrcapitaltrades
+
+Best regards,
+Coley Grantham
+Founder &amp; CEO, Tyr Capital
+tyrcapitalllc@gmail.com">
 
         <div class="form-submit">
           <button type="submit" class="submit-btn">Submit Inquiry</button>
@@ -474,9 +520,89 @@
         if (e.key === 'Escape') closeModal();
       });
 
+      // ── GA Event Tracking ──────────────────────────────────────────
+
+      // 1. CTA Click Tracking — all "Become A Lender" and hero buttons
+      document.querySelectorAll('a[href="#lender"], .telegram-btn, .hero-btn-primary').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (typeof gtag === 'function') {
+            gtag('event', 'cta_click', {
+              event_category: 'CTA',
+              event_label: btn.textContent.trim() || 'Become A Lender',
+              page_location: window.location.href
+            });
+          }
+        });
+      });
+
+      // 2. Scroll Depth Tracking — fire at 25%, 50%, 75%, 90%
+      (function () {
+        const milestones = [25, 50, 75, 90];
+        const fired = {};
+        function getScrollPct() {
+          const scrollTop = window.scrollY || document.documentElement.scrollTop;
+          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          return docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
+        }
+        window.addEventListener('scroll', function () {
+          const pct = getScrollPct();
+          milestones.forEach(function (m) {
+            if (!fired[m] && pct >= m) {
+              fired[m] = true;
+              if (typeof gtag === 'function') {
+                gtag('event', 'scroll_depth', {
+                  event_category: 'Engagement',
+                  event_label: m + '%',
+                  value: m
+                });
+              }
+            }
+          });
+        }, { passive: true });
+      })();
+
+      // 3. Section Visibility Tracking — fire when key sections enter viewport
+      (function () {
+        const sections = ['about', 'strategy', 'research', 'lender', 'ceo', 'contact'];
+        const observed = {};
+        if ('IntersectionObserver' in window) {
+          const observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting && !observed[entry.target.id]) {
+                observed[entry.target.id] = true;
+                if (typeof gtag === 'function') {
+                  gtag('event', 'section_view', {
+                    event_category: 'Engagement',
+                    event_label: entry.target.id,
+                    page_location: window.location.href
+                  });
+                }
+              }
+            });
+          }, { threshold: 0.3 });
+          sections.forEach(function (id) {
+            const el = document.getElementById(id);
+            if (el) observer.observe(el);
+          });
+        }
+      })();
+
+      // ── End GA Event Tracking ────────────────────────────────────────
+
       if (lenderForm) {
+        // Sync email to _replyto field so Formspree sends auto-reply to submitter
+        const emailInput = lenderForm.querySelector('input[type="email"]');
+        const replyToField = document.getElementById('replyToField');
+        if (emailInput && replyToField) {
+          emailInput.addEventListener('input', function () {
+            replyToField.value = emailInput.value;
+          });
+        }
+
         lenderForm.addEventListener('submit', async function (e) {
           e.preventDefault();
+          // Ensure _replyto is set at submit time
+          if (emailInput && replyToField) replyToField.value = emailInput.value;
           const formData = new FormData(lenderForm);
           try {
             const response = await fetch(lenderForm.action, {

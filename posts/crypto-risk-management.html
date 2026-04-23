@@ -181,6 +181,71 @@
       Tyr Capital research and blog content are provided for informational purposes only and do not constitute financial or investment advice.
     </div>
   </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // GA: Read-time tracking — fire at 30s, 60s, 120s
+      var readTimers = [30, 60, 120];
+      var readFired = {};
+      var pageStart = Date.now();
+      readTimers.forEach(function (secs) {
+        setTimeout(function () {
+          if (!readFired[secs]) {
+            readFired[secs] = true;
+            if (typeof gtag === 'function') {
+              gtag('event', 'read_time', {
+                event_category: 'Blog',
+                event_label: secs + 's',
+                page_title: document.title,
+                page_location: window.location.href,
+                value: secs
+              });
+            }
+          }
+        }, secs * 1000);
+      });
+
+      // GA: Scroll depth tracking — fire at 25%, 50%, 75%, 90%
+      (function () {
+        var milestones = [25, 50, 75, 90];
+        var fired = {};
+        function getScrollPct() {
+          var scrollTop = window.scrollY || document.documentElement.scrollTop;
+          var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          return docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
+        }
+        window.addEventListener('scroll', function () {
+          var pct = getScrollPct();
+          milestones.forEach(function (m) {
+            if (!fired[m] && pct >= m) {
+              fired[m] = true;
+              if (typeof gtag === 'function') {
+                gtag('event', 'scroll_depth', {
+                  event_category: 'Engagement',
+                  event_label: m + '%',
+                  page_title: document.title,
+                  value: m
+                });
+              }
+            }
+          });
+        }, { passive: true });
+      })();
+
+      // GA: CTA click tracking
+      document.querySelectorAll('a[href*="#lender"], a[href*="index.html#lender"], .telegram-btn, .cta-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (typeof gtag === 'function') {
+            gtag('event', 'cta_click', {
+              event_category: 'CTA',
+              event_label: btn.textContent.trim() || 'Become A Lender',
+              page_location: window.location.href
+            });
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
 
