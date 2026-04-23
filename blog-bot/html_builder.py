@@ -69,6 +69,9 @@ def build_post_html(post):
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title} | Tyr Capital</title>
   <meta name="description" content="{excerpt}">
+  <meta name="keywords" content="{post.get('keywords', category + ', crypto, Bitcoin, digital assets, Tyr Capital')}">
+  <meta name="author" content="Coley Grantham">
+  <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://tyrcapital.io/posts/{slug}.html">
 
   <!-- Open Graph -->
@@ -78,6 +81,8 @@ def build_post_html(post):
   <meta property="og:description" content="{excerpt}">
   <meta property="og:image" content="{thumb_abs}">
   <meta property="og:site_name" content="Tyr Capital">
+  <meta property="article:author" content="Coley Grantham">
+  <meta property="article:published_time" content="{date_full}">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
@@ -93,10 +98,11 @@ def build_post_html(post):
     "headline": "{title}",
     "description": "{excerpt}",
     "image": "{thumb_abs}",
-    "author": {{"@type": "Person", "name": "Coley Grantham"}},
-    "publisher": {{"@type": "Organization", "name": "Tyr Capital", "url": "https://tyrcapital.io"}},
+    "author": {{"@type": "Person", "name": "Coley Grantham", "url": "https://www.linkedin.com/in/coley-grantham-1b10a4bb/"}},
+    "publisher": {{"@type": "Organization", "name": "Tyr Capital", "url": "https://tyrcapital.io", "logo": {{"@type": "ImageObject", "url": "https://tyrcapital.io/favicon.png"}}}},
     "datePublished": "{date_full}",
     "dateModified": "{date_full}",
+    "keywords": "{post.get('keywords', category)}",
     "mainEntityOfPage": {{"@type": "WebPage", "@id": "https://tyrcapital.io/posts/{slug}.html"}}
   }}
   </script>

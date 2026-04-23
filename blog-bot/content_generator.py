@@ -149,6 +149,7 @@ OUTPUT FORMAT — respond ONLY with valid JSON, no markdown, no code fences:
   "category": "One of: Bitcoin | Lending | Risk | Trading Basics | Market Cycles | Weekly Outlook | Passive Income | Altcoins | Market Update | Crypto Education",
   "topic": "A 3-5 word topic descriptor for duplicate prevention (e.g. 'BTC support level analysis')",
   "excerpt": "A 1-2 sentence teaser for the blog card (max 160 chars)",
+  "keywords": "5-7 comma-separated SEO keywords relevant to the post (e.g. 'Bitcoin support levels, BTC technical analysis, crypto market structure')",
   "read_time": "X min",
   "html_body": "The full post body as clean HTML using only <p>, <h2>, <h3>, <strong>, <em> tags. No <html>, <head>, <body>, <style> tags."
 }}"""
