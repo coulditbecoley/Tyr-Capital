@@ -120,7 +120,7 @@ a {
   width: 100%;
 }
 
-.telegram-btn {
+.cta-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -136,7 +136,7 @@ a {
   white-space: nowrap;
 }
 
-.telegram-btn:hover {
+.cta-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 16px 34px rgba(200, 164, 90, 0.34);
 }
@@ -1156,7 +1156,7 @@ main.container {
     margin-top: 10px;
   }
 
-  .telegram-btn {
+  .cta-btn {
     width: 100%;
     text-align: center;
     justify-content: center;
@@ -1193,7 +1193,7 @@ main.container {
   margin: 4px 0 16px;
 }
 
-.footer-telegram {
+.footer-linkedin {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1209,7 +1209,7 @@ main.container {
   width: fit-content;
 }
 
-.footer-telegram:hover {
+.footer-linkedin:hover {
   background: rgba(200, 164, 90, 0.18);
 }
 
