@@ -1626,3 +1626,44 @@ main.container {
     font-size: 1.2rem;
   }
 }
+
+/* ============================================================
+   Cal.com Booking Widget
+   ============================================================ */
+
+.cal-section-heading {
+  margin: 36px 0 16px;
+  border-top: 1px solid #2A3140;
+  padding-top: 32px;
+}
+
+.cal-section-heading h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #E8EAED;
+  margin: 0 0 8px;
+}
+
+.cal-section-heading p {
+  font-size: 0.95rem;
+  color: #8B95A7;
+  margin: 0 0 16px;
+}
+
+#cal-inline-home {
+  width: 100%;
+  min-height: 700px;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid rgba(200, 164, 90, 0.15);
+  background: #0A0E14;
+}
+
+@media (max-width: 768px) {
+  #cal-inline-home {
+    min-height: 600px;
+    border-radius: 0;
+    margin-left: -20px;
+    width: calc(100% + 40px);
+  }
+}
