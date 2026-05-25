@@ -916,6 +916,14 @@ header.site-hero::before {
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   overflow: hidden;
 }
+.blog-hero .container {
+  display: flex;
+  justify-content: center;
+}
+.blog-hero .hero-card {
+  margin: 0 auto;
+  text-align: center;
+}
 
 .blog-hero::before {
   content: "";
