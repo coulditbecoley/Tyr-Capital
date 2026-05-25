@@ -1693,18 +1693,21 @@ main.container {
   .cal-section-heading p {
     font-size: 0.9rem;
   }
-  /* Cal.com widget: full-bleed on mobile, taller for usability */
+  /* Cal.com widget: centered, full-width on mobile */
   #cal-inline-home {
     min-height: 650px;
-    border-radius: 0;
-    margin-left: -20px;
-    width: calc(100% + 40px);
-    border-left: none;
-    border-right: none;
+    border-radius: 6px;
+    margin: 0 auto;
+    width: 100%;
+    display: block;
+  }
+  .cal-section-heading {
+    text-align: center;
   }
 }
 @media (max-width: 480px) {
   #cal-inline-home {
     min-height: 700px;
+    border-radius: 4px;
   }
 }
