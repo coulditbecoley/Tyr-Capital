@@ -18,7 +18,7 @@
   --rule: rgba(255, 255, 255, 0.09);
   --glass-line: rgba(255, 255, 255, 0.1);
   --glass-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.022) 100%);
-  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 24px 48px -28px rgba(0, 0, 0, 0.85);
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34), inset 1px 0 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.35), 0 30px 60px -30px rgba(0, 0, 0, 0.85);
   --radius: 10px;
   --radius-lg: 20px;
   --nav-height: 64px;
@@ -143,13 +143,88 @@ p {
    and the lead panel so the page stays cheap to composite. */
 .glass,
 .guide,
-.cta-band,
 .post-footer-cta {
   position: relative;
-  border: 1px solid var(--glass-line);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: var(--radius-lg);
-  background: var(--glass-fill), rgba(9, 18, 31, 0.6);
+  background: var(--glass-fill), rgba(9, 18, 31, 0.78);
   box-shadow: var(--glass-shadow);
+}
+
+/* Real glass: a thin clear fill that blurs and brightens what sits behind it,
+   a diagonal sheen, and a lit top-left edge. */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .guide,
+  .post-footer-cta {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.04) 36%, rgba(255, 255, 255, 0.015) 62%, rgba(225, 194, 122, 0.06) 100%), rgba(7, 14, 25, 0.26);
+    -webkit-backdrop-filter: blur(20px) saturate(175%) brightness(1.08);
+    backdrop-filter: blur(20px) saturate(175%) brightness(1.08);
+  }
+}
+
+.cta-band {
+  position: relative;
+  border: 1px solid var(--glass-line);
+}
+
+/* ---- Light behind the glass ----
+   Glass only reads as glass with something to refract, so sections that hold
+   cards carry the wave or the ribbon art behind them. */
+.decor-wave,
+.decor-ribbon,
+.decor-ribbon-left,
+.section:has(> .container > .guides) {
+  isolation: isolate;
+  overflow: clip;
+}
+
+.decor-wave::before,
+.decor-ribbon::before,
+.decor-ribbon-left::before,
+.section:has(> .container > .guides)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.decor-wave::before,
+.section:has(> .container > .guides)::before {
+  background: url("images/wave-still.webp") center bottom / max(100%, 1500px) auto no-repeat;
+  opacity: 0.85;
+  -webkit-mask-image: linear-gradient(180deg, transparent 8%, #000 55%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 8%, #000 55%, #000 82%, transparent 100%);
+}
+
+.decor-ribbon::before,
+.decor-ribbon-left::before {
+  background: url("images/cta-glass.webp") right center / auto 118% no-repeat;
+  opacity: 0.6;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+}
+
+/* Keep the art behind the form, clear of the plain text beside it */
+.decor-ribbon::before {
+  -webkit-mask-image: linear-gradient(90deg, transparent 44%, #000 64%), linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent 44%, #000 64%), linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.decor-ribbon-left::before {
+  transform: scaleX(-1);
+  -webkit-mask-image: linear-gradient(180deg, transparent 22%, #000 46%, #000 80%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 22%, #000 46%, #000 80%, transparent 100%);
+}
+
+@media (max-width: 960px) {
+  .decor-ribbon::before {
+    -webkit-mask-image: linear-gradient(180deg, transparent 42%, #000 60%, #000 86%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 42%, #000 60%, #000 86%, transparent 100%);
+  }
 }
 
 /* Pointer-following highlight, set from site.js */
@@ -235,10 +310,12 @@ p {
 }
 
 .btn-ghost {
-  border-color: rgba(255, 255, 255, 0.16);
-  background-color: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.07);
   color: var(--text);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  backdrop-filter: blur(12px) saturate(160%);
 }
 
 .btn-ghost:hover {
@@ -274,14 +351,14 @@ p {
   border: 1px solid rgba(225, 194, 122, 0.3);
   border-radius: 16px;
   background: rgba(6, 12, 21, 0.9);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 20px 40px -22px rgba(0, 0, 0, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.3), 0 20px 40px -22px rgba(0, 0, 0, 0.9);
 }
 
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .topbar .nav {
-    background: rgba(6, 12, 21, 0.58);
-    -webkit-backdrop-filter: blur(18px) saturate(150%);
-    backdrop-filter: blur(18px) saturate(150%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02) 45%), rgba(6, 12, 21, 0.34);
+    -webkit-backdrop-filter: blur(22px) saturate(175%);
+    backdrop-filter: blur(22px) saturate(175%);
   }
 }
 
@@ -469,7 +546,7 @@ p {
 
 .hero .container {
   position: relative;
-  padding: calc(var(--nav-height) + var(--nav-gap) + 104px) 0 clamp(300px, 31vw, 420px);
+  padding: calc(var(--nav-height) + var(--nav-gap) + 104px) 0 clamp(360px, 34vw, 480px);
 }
 
 .hero-copy {
@@ -530,9 +607,12 @@ p {
 
 .facts li {
   padding: 7px 14px;
-  border: 1px solid var(--glass-line);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 999px;
-  background: rgba(7, 14, 24, 0.55);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  backdrop-filter: blur(12px) saturate(160%);
   font-size: 0.88rem;
   font-weight: 500;
   color: var(--text);
@@ -555,7 +635,7 @@ p {
   }
 
   .hero .container {
-    padding: 4px 0 250px;
+    padding: 4px 0 290px;
   }
 
   .hero-lede {
@@ -567,27 +647,41 @@ p {
 .panel-wrap {
   position: relative;
   z-index: 2;
-  margin-top: -170px;
+  margin-top: -230px;
   padding-bottom: 104px;
 }
 
 .panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   width: min(1320px, calc(100% - 32px));
   margin: 0 auto;
   padding: 76px 0 84px;
-  border: 1px solid rgba(225, 194, 122, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 30px;
-  background: radial-gradient(60% 220px at 58% 0%, rgba(225, 194, 122, 0.2), transparent 100%), linear-gradient(180deg, rgba(200, 164, 90, 0.2) 0%, rgba(9, 18, 31, 0.9) 170px, rgba(7, 16, 28, 0.97) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 50px 90px -50px rgba(0, 0, 0, 0.9);
+  background: linear-gradient(180deg, rgba(200, 164, 90, 0.2) 0%, rgba(9, 18, 31, 0.92) 170px, rgba(7, 16, 28, 0.97) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 1px 0 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.35), 0 50px 90px -50px rgba(0, 0, 0, 0.9);
 }
 
-@media (hover: hover) and (min-width: 861px) {
-  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .panel {
-      background: radial-gradient(60% 220px at 58% 0%, rgba(225, 194, 122, 0.2), transparent 100%), linear-gradient(180deg, rgba(200, 164, 90, 0.16) 0%, rgba(9, 18, 31, 0.62) 170px, rgba(7, 16, 28, 0.93) 460px);
-      -webkit-backdrop-filter: blur(22px) saturate(150%);
-      backdrop-filter: blur(22px) saturate(150%);
-    }
+/* The wave carries on inside the panel so its cards have light to bend */
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url("images/wave-still.webp") center bottom / max(100%, 1300px) auto no-repeat;
+  opacity: 0.8;
+  -webkit-mask-image: linear-gradient(180deg, transparent 30%, #000 75%);
+  mask-image: linear-gradient(180deg, transparent 30%, #000 75%);
+  pointer-events: none;
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .panel {
+    background: radial-gradient(60% 240px at 58% 0%, rgba(225, 194, 122, 0.22), transparent 100%), linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 40%), rgba(7, 14, 25, 0.42);
+    -webkit-backdrop-filter: blur(26px) saturate(170%);
+    backdrop-filter: blur(26px) saturate(170%);
   }
 }
 
@@ -601,17 +695,6 @@ p {
 .terms div {
   padding: 22px 22px 24px;
   border-radius: 16px;
-}
-
-.terms div::before {
-  content: "";
-  position: absolute;
-  top: -1px;
-  left: 22px;
-  right: 22px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent-2), transparent);
-  opacity: 0.7;
 }
 
 .terms dt {
@@ -741,7 +824,7 @@ p {
 
 @media (max-width: 860px) {
   .panel-wrap {
-    margin-top: -150px;
+    margin-top: -190px;
     padding-bottom: 64px;
   }
 
@@ -916,8 +999,8 @@ p {
   padding: 12px 14px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius);
-  background-color: rgba(5, 10, 18, 0.6);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+  background-color: rgba(5, 10, 18, 0.42);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.08);
   color: var(--text);
   font-family: var(--sans);
   font-size: 1rem;
@@ -1554,4 +1637,14 @@ p {
 
 .prose h3 + .leader-role {
   margin-top: 6px;
+}
+
+/* ---- Text on clear glass stays readable over the art behind it ---- */
+.leader .prose > p:not(.leader-role),
+.lender-form .form-note {
+  color: var(--text);
+}
+
+.decor-ribbon-left::before {
+  opacity: 0.5;
 }
