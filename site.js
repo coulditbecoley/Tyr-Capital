@@ -1,28 +1,10 @@
-/* Tyr Capital: hero particle wave and glass pointer highlight.
+/* Tyr Capital: hero particle wave.
    Plain WebGL, no library. The wave only animates while the hero is on
    screen, and draws a single still frame when reduced motion is requested. */
 (function () {
   'use strict';
 
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* ---- Pointer highlight on glass surfaces ---- */
-  if (window.matchMedia('(hover: hover)').matches) {
-    var target = null, px = 0, py = 0, queued = false;
-    document.addEventListener('pointermove', function (e) {
-      var el = e.target.closest ? e.target.closest('.glass, .guide') : null;
-      if (!el) return;
-      target = el; px = e.clientX; py = e.clientY;
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(function () {
-        queued = false;
-        var r = target.getBoundingClientRect();
-        target.style.setProperty('--mx', (px - r.left) + 'px');
-        target.style.setProperty('--my', (py - r.top) + 'px');
-      });
-    }, { passive: true });
-  }
+  var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   /* ---- Hero wave ---- */
   var canvas = document.getElementById('heroWave');
@@ -56,12 +38,13 @@
     '    float y = sin(x * 0.42 + t * 0.42) * 0.78',
     '            + sin(z * 0.6 - t * 0.36 + x * 0.22) * 0.6',
     '            + sin(x * 0.9 + z * 1.3 + t * 0.66) * 0.16;',
-    '    float swell = exp(-pow((x - 2.2) * 0.3, 2.0));',
-    '    y += swell * sin(z * 0.85 - t * 0.5) * 0.6;',
+    '    float ridge = (x - 2.2 - z * 0.26) * 0.32;',
+    '    float swell = exp(-ridge * ridge);',
+    '    y += swell * sin(z * 0.78 - t * 0.5) * 1.05;',
     '    y *= intro;',
     '    w = vec3(x, y, z);',
-    '    vH = y;',
-    '    base = smoothstep(1.0, 0.82, abs(p.x));',
+    '    vH = y * 0.75 + 0.45 * cos(z * 0.6 - t * 0.36 + x * 0.22);',
+    '    base = 1.0 - smoothstep(0.82, 1.0, abs(p.x));',
     '  } else {',
     '    float x = p.x * 12.0 + sin(t * 0.11 + s * 40.0) * 0.6;',
     '    float z = p.y * 14.0 + 0.4;',
@@ -78,11 +61,11 @@
     '  gl_Position = vec4(v.x * 1.55 / aspect, v.y * 1.55 + 0.1 * d, 0.0, v.z);',
     '  float near = clamp((6.5 - d) / 6.5, 0.0, 1.0);',
     '  float size = dpr * (24.0 / d) * (1.0 + near * near * 3.2);',
-    '  gl_PointSize = max(size, 1.7 * dpr);',
+    '  gl_PointSize = clamp(size, 1.35 * dpr, 18.0 * dpr);',
     '  float ny = gl_Position.y / d;',
     '  vA = base * intro',
     '     * (1.0 / (1.0 + near * near * 5.0))',
-    '     * smoothstep(17.0, 9.0, d)',
+    '     * (1.0 - smoothstep(8.0, 17.0, d))',
     '     * smoothstep(-1.0, -0.72, ny);',
     '  vS = near;',
     '}'
@@ -96,7 +79,7 @@
     'void main() {',
     '  float r = length(gl_PointCoord - 0.5) * 2.0;',
     '  float a = (1.0 - smoothstep(mix(0.5, 0.0, vS), 1.0, r)) * vA;',
-    '  vec3 gold = mix(vec3(0.66, 0.52, 0.26), vec3(1.0, 0.93, 0.74), smoothstep(-0.3, 1.1, vH));',
+    '  vec3 gold = mix(vec3(0.49, 0.36, 0.17), vec3(1.0, 0.93, 0.74), smoothstep(-0.3, 1.1, vH));',
     '  gl_FragColor = vec4(gold * a, a);',
     '}'
   ].join('\n');
@@ -159,7 +142,7 @@
   gl.blendFunc(gl.ONE, gl.ONE);
   gl.clearColor(0, 0, 0, 0);
 
-  var dpr = 1, time = 14, intro = reduceMotion ? 1 : 0;
+  var dpr = 1, time = 14, intro = motion.matches ? 1 : 0.65;
   var parX = 0, parY = 0, aimX = 0, aimY = 0;
   var running = false, onScreen = false, raf = 0, last = 0;
 
@@ -174,7 +157,7 @@
     gl.viewport(0, 0, w, h);
     gl.uniform1f(uAspect, w / h);
     gl.uniform1f(uDpr, dpr);
-    if (!running) draw();
+    if (onScreen && !document.hidden && !running && !gl.isContextLost()) draw();
   }
 
   function draw() {
@@ -200,7 +183,8 @@
   }
 
   function start() {
-    if (running || reduceMotion || !onScreen || document.hidden) return;
+    if (running || !onScreen || document.hidden || gl.isContextLost()) return;
+    if (motion.matches) { draw(); return; }
     running = true;
     last = performance.now();
     raf = requestAnimationFrame(frame);
@@ -236,8 +220,16 @@
     useStill();
   });
 
-  if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {
-    window.addEventListener('pointermove', function (e) {
+  motion.addEventListener('change', function () {
+    stop();
+    intro = 1;
+    aimX = aimY = parX = parY = 0;
+    start();
+  });
+
+  if (window.matchMedia('(hover: hover)').matches) {
+    canvas.parentElement.addEventListener('pointermove', function (e) {
+      if (!running) return;
       aimX = (e.clientX / window.innerWidth) * 2 - 1;
       aimY = (e.clientY / window.innerHeight) * 2 - 1;
     }, { passive: true });
