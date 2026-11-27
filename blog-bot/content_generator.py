@@ -141,7 +141,8 @@ REQUIREMENTS:
 - Write in a professional but accessible tone — not academic, not casual
 - Do NOT write bullet points or numbered lists — use full paragraphs only
 - Include specific price levels, percentages, or market data from the context above where relevant
-- End with a natural call-to-action paragraph mentioning Tyr Capital's private lending program
+- Do NOT mention Tyr Capital, its lending program, accredited or institutional investors, or any returns or yield a reader could earn from Tyr Capital. The page template adds its own call to action
+- Title: plain and specific, under 70 characters. Do NOT use the words "Navigating", "Amid", "Decoding" or "Extreme Fear" in the title
 
 OUTPUT FORMAT — respond ONLY with valid JSON, no markdown, no code fences:
 {{
